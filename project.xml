@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<meta title="Narrow Jump" package="com.jylhis.narrowjump" version="1.0.0" company="Jylhis" />
+	<app main="Main" path="Export" file="Project" />
+
+    <window width="240" height="360" if="desktop" />
+	<window width="0" height="0" if="android" />
+	<window if="mobile"	orientation="portrait" fullscreen="true" width="0" height="0" />
+
+
+	<source path="Source" />
+	
+	<haxelib name="openfl" />
+    <haxelib name="flixel"/>
+	<haxelib name="flixel-addons" />
+
+	<!--<haxedef name="FLX_NO_MOUSE" if="mobile" />-->
+	<haxedef name="FLX_NO_KEYBOARD" if="mobile" />
+	
+	<assets path="Assets" rename="assets" exclude="icon.svg" />
+	<icon path="Assets/icon.svg" />
+</project>

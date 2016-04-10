@@ -163,7 +163,7 @@ pip-log.txt
 .DS_Store
 
 # export directories
-export
+Export
 bin
 dump
 

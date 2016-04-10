@@ -1,32 +1,51 @@
-![](https://raw.github.com/HaxeFlixel/haxeflixel.com/master/src/files/images/flixel-logos/flixel-demos.png)
+# ![Icon](assets/icon.png) NarrowJump
 
-[flixel](https://github.com/HaxeFlixel/flixel) | [addons](https://github.com/HaxeFlixel/flixel-addons) | [ui](https://github.com/HaxeFlixel/flixel-ui) | [demos](https://github.com/HaxeFlixel/flixel-demos) | [tools](https://github.com/HaxeFlixel/flixel-tools) | [templates](https://github.com/HaxeFlixel/flixel-templates) | [docs](https://github.com/HaxeFlixel/flixel-docs) | [haxeflixel.com](https://github.com/HaxeFlixel/haxeflixel.com)
+Fork of HaxeFlixel demo [Flappybalt](https://github.com/HaxeFlixel/flixel-demos/tree/dev/Arcade/Flappybalt).
 
-[![Haxelib Version](https://img.shields.io/github/tag/HaxeFlixel/flixel-demos.svg?style=flat&label=haxelib)](http://lib.haxe.org/p/flixel-demos)
-[![Build Status](https://travis-ci.org/HaxeFlixel/flixel-demos.png)](https://travis-ci.org/HaxeFlixel/flixel-demos)
+# Releasing for Android with HaxeFlixel (Windows)
 
-##About
+The process for releasing a HaxeFlixel game as an Android app is a bit complicated, so I thought I'd step through some of the steps. This is for Windows, but the process is largely the same for any platform.
 
-This is a collection of **75+ demos** using the HaxeFlixel engine and demonstrating its capabilities. All the ones that are compatible with flash can be found on [haxeflixel.com/demos](http://haxeflixel.com/demos/).
+1. [Register](https://play.google.com/apps/publish/signup/) for a Google Play Developer Console account. The charge is currently $25.
+2. Prepare to compile by running `lime setup android`. Make sure that your path to the Java JDK looks like `c:\java\jdk1.6.0_37` and NOT to the `bin` directory.
+2. Compile your app for Android. This can be done simply by running `lime build android` from the command line in your project directory. Make sure your input is set up properly, accounting for touch controls and the lack of mouse/keyboard! HaxeFlixel has some handy Haxe defines for this, e.g. `FLX_NO_MOUSE`, `FLX_NO_KEYBOARD`, etc.
+3. Test your app on an Android device! You can set up the Android Debug Bridge (ADB) for this, but you could just email the APK to yourself. Slower, but easier.
+4. Provided everything works, you'll need to sign your app before you release it. So long as your `JAVA_HOME` environment variable points to the BIN directory (e.g. `c:/java/jdk1.6.0_37/bin/`) you can do this by running `keytool` from the command line. [Google recommends](http://developer.android.com/tools/publishing/app-signing.html) the following settings:
 
-![](demoSelection.png)
+````
+keytool -genkey -v -keystore YOUR_RELEASE_KEY.keystore -alias YOUR_ALIAS -keyalg RSA -keysize 2048 -validity 10000
+````
 
-##Installation
+It will ask for a password and stuff, which you will need to remember! Obviously, use your own values for `YOUR_RELEASE_KEY` and `YOUR_ALIAS`.
 
-To get the master branch / the release compatible with the latest flixel release, run:
+In order for Lime to see your certificate, you need to add it to the `Project.XML` file. You can add this line:
 
-`haxelib install flixel-demos`
+````
+<certificate path="YOUR_RELEASE_KEY.keystore" alias="YOUR_ALIAS" password="YOUR_PASSWORD" if="android" unless="debug"/>
+````
 
-You can then use [flixel-tools](https://github.com/HaxeFlixel/flixel-tools) `create` command to create one of the demos in a directory of your choice, or alternatively run them directly from the haxelib directory.
+Obviously use your own values where appropriate. Now when you run `lime build android` it will sign the app automagically! Just look for `MyApp-release.apk` in `export/android/bin/bin/`.
 
-##For Developers
+Finally, [upload your APK](https://play.google.com/apps/publish/)! You can set up Google Play stuff too.
 
-If you are wanting to contribute code, please review the follwing documentation:
+## Optional Steps
 
-- [Code Contributions](http://haxeflixel.com/documentation/code-contributions)
-- [Code Style](http://haxeflixel.com/documentation/code-style)
-- [Install development flixel](http://haxeflixel.com/documentation/install-development-flixel/)
+* If you have an SVG file set up as your icon in your `Project.XML` file, Lime will make nice high-res icons for you. Do this! Just add `<icon path="assets/icon.svg"/>` to your `Project.XML` file. You can create SVGs using [InkScape](http://inkscape.org/en/), or even by hand, as they are [basically just XML files](http://www.w3.org/TR/SVG11/).
+* Don't want to scare off potential customers with a bunch of app permissions? Lime includes a few by default, but this can be overridden. After building your app at least once, get `export/android/bin/bin/AndroidManifest.xml` and copy it somewhere else (I usually put it into a `libs` directory). Then, in your `Project.XML`, add:
 
-If you have a question or have not contributed on github before, there are friendly people in the community that help out in the [forums](http://haxeflixel.com/documentation/community/).
+````
+<template path="libs/AndroidManifest.xml" rename="AndroidManifest.xml" if="android"/>
+````
 
-For using git with github we recommended using a GUI application to manage your changes, for example [SourceTree](http://www.sourcetreeapp.com/).
+Now Lime will use this file instead of the default AndroidManifest it would normally generate. Inside this file you'll notice a few lines:
+
+````
+<uses-permission android:name="android.permission.WAKE_LOCK"/>
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.VIBRATE"/>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+````
+
+**As far as I know** you can delete these lines without issue. If you do this, when someone goes to launch your app, it will say "This app requires no special permissions". Obviously, this is not applicable if you actually need one of these permissions!
+
+All of the code in this repository is available under an MIT license. Code not included in this repository (mostly just app settings, private keys, etc) is copyright [SteveRichey](https://github.com/steverichey) but if you have questions about implementation let me know and I'll help you out!
