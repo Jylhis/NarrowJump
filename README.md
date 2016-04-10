@@ -1,4 +1,4 @@
-# ![Icon](assets/icon.png) NarrowJump
+# ![Icon](Assets/icon.png) NarrowJump
 
 Fork of HaxeFlixel demo [Flappybalt](https://github.com/HaxeFlixel/flixel-demos/tree/dev/Arcade/Flappybalt).
 
