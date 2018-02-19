@@ -1,5 +1,0 @@
-image: peacerik/docker-haxeflixel
-
-build:
-  script:
-    - lime build neko
